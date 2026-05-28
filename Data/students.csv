@@ -1,0 +1,11 @@
+id,name,department,grade,age,score,city
+1,Alice,CS,1,18,85,Taipei
+2,Bob,EE,2,19,78,Taichung
+3,Charlie,CS,3,21,92,Taipei
+4,David,ME,2,20,66,Tainan
+5,Eva,CS,4,22,95,Kaohsiung
+6,Frank,EE,1,18,73,Taipei
+7,Grace,BA,3,21,88,Taichung
+8,Hank,ME,4,23,59,Tainan
+9,Ivy,CS,2,20,81,Kaohsiung
+10,Jack,EE,3,21,90,Taipei
