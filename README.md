@@ -5,18 +5,19 @@
 This project is **Project B** for the course **CS351/IN321: AI-assisted Software Development**.
 
 The goal of this project is to build a small CSV-based database program using **C++**.
+
 The program can load student data from a CSV file, display records, search records, insert new student data, and save the updated data back to the CSV file.
 
-This project helped me practice basic database-like operations, CSV file handling, input validation, project organization, and GitHub workflow.
+This project helped me practice CSV file handling, basic database-like operations, input validation, project organization, and GitHub workflow.
 
 ---
 
 ## 2. Data Design
 
-The project uses a CSV file named:
+The project uses a CSV file located at:
 
 ```text
-students.csv
+Data/students.csv
 ```
 
 The CSV data is designed with the following columns:
@@ -41,9 +42,10 @@ id,name,department,grade,age,score,city
 ```
 
 I designed the data this way because it is simple and easy to understand.
+
 Each row represents one student record, and each column represents one attribute of the student.
 
-The `id` field is used as the unique identifier, so the program checks whether an ID already exists before inserting a new student.
+The `id` field is used as the unique identifier. Because of this, the program checks whether an ID already exists before inserting a new student.
 
 ---
 
@@ -53,7 +55,7 @@ This program currently supports the following functions:
 
 ### 1. Load CSV
 
-The program reads student data from `students.csv` and stores it in memory.
+The program reads student data from `Data/students.csv` and stores it in memory.
 
 ### 2. Display Records
 
@@ -85,8 +87,7 @@ After inserting data, the program can save the updated records back to the CSV f
 
 The insert function is an important part of this project.
 
-I did not only append a new row directly into the CSV file.
-Instead, I added basic validation before inserting the data.
+I did not only append a new row directly into the CSV file. Instead, I added basic validation before inserting the data.
 
 The reason is that invalid data can make the CSV database difficult to use later.
 
@@ -97,8 +98,7 @@ For example:
 * If `name` or `department` is empty, the record is incomplete.
 * If `grade`, `age`, or `score` is not a number, the program may produce incorrect results.
 
-Because of this, I designed the insert function to check the input first.
-Only valid data can be inserted into the database.
+Because of this, I designed the insert function to check the input first. Only valid data can be inserted into the database.
 
 This makes the program more reliable and closer to a real database system.
 
@@ -106,7 +106,7 @@ This makes the program more reliable and closer to a real database system.
 
 ## 5. Project Structure
 
-The project is organized as follows:
+The current project is organized as follows:
 
 ```text
 11402_CS351_ProjectB/
@@ -115,16 +115,12 @@ The project is organized as follows:
 │   └── workflows/
 │       └── ci.yml
 │
-├── docs/
-│   └── reflection.md
+├── Data/
+│   └── students.csv
 │
 ├── src/
 │   └── main.cpp
 │
-├── testcase/
-│   └── test_cases.md
-│
-├── students.csv
 └── README.md
 ```
 
@@ -133,10 +129,8 @@ The project is organized as follows:
 | Path                       | Description                          |
 | -------------------------- | ------------------------------------ |
 | `.github/workflows/ci.yml` | GitHub Actions CI workflow           |
+| `Data/students.csv`        | Sample student CSV data              |
 | `src/main.cpp`             | Main C++ source code                 |
-| `students.csv`             | Sample student CSV data              |
-| `testcase/test_cases.md`   | Manual test cases                    |
-| `docs/reflection.md`       | Project reflection                   |
 | `README.md`                | Project introduction and usage guide |
 
 ---
@@ -168,13 +162,13 @@ This command compiles the C++ program and creates an executable file named `csv_
 ### Linux / Git Bash / WSL
 
 ```bash
-./csv_database students.csv
+./csv_database Data/students.csv
 ```
 
 ### Windows PowerShell
 
 ```powershell
-.\csv_database.exe students.csv
+.\csv_database.exe Data/students.csv
 ```
 
 ---
@@ -199,7 +193,11 @@ Expected result:
 Student inserted successfully.
 ```
 
-After saving, the new record will be added to `students.csv`.
+After saving, the new record will be added to:
+
+```text
+Data/students.csv
+```
 
 ---
 
@@ -257,8 +255,7 @@ I practiced:
 * writing README documentation;
 * using GitHub Actions for CI.
 
-The most important thing I learned is that a program should not only work under normal input.
-It should also handle incorrect input carefully.
+The most important thing I learned is that a program should not only work under normal input. It should also handle incorrect input carefully.
 
 ---
 
