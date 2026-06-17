@@ -1,234 +1,143 @@
-# CSV Mini Database - SELECT Feature
+# Source Code
 
-## Project Description
+## About This Folder
 
-This project is a small C++ program that reads data from a CSV file and provides a simple `SELECT` feature.
+This folder contains the main C++ source code for **Project B: CSV Mini Database**.
 
-The CSV file used in this project is `students.csv`.  
-The purpose of this project is to simulate a basic database query system using only a CSV file and C++.
+The main program file is:
 
-## Why I Chose the SELECT Feature
+`main.cpp`
 
-I chose to implement the `SELECT` feature because it is one of the most important and basic functions in a database system.
+This program is designed to work with the student CSV data stored in:
 
-Before adding, updating, or deleting data, users usually need to search and view the data first.  
-Therefore, `SELECT` is a good starting point for building a CSV mini database.
+`Data/students.csv`
 
-Through this feature, I can practice:
+---
 
-- Reading structured data from a CSV file
-- Choosing specific columns
-- Filtering records with conditions
-- Sorting query results
-- Understanding how database queries work at a basic level
+## Program Purpose
 
-## Files
+The purpose of this program is to build a small CSV-based database system using C++.
 
-| File | Description |
-|---|---|
-| `csv_select.cpp` | Main C++ source code |
-| `students.csv` | Sample CSV dataset |
-| `README.md` | Project explanation |
+The program can:
 
-## Dataset Format
+* load student data from a CSV file;
+* display all records;
+* search records by column values;
+* insert a new student record;
+* validate user input;
+* save the updated data back to the CSV file.
 
-The program reads a CSV file named `students.csv`.
+This project helps me practice file handling, data processing, input validation, and basic database-like operations.
 
-Example data:
+---
 
-```csv
-id,name,department,grade,age,score,city
-1,Alice,CS,1,18,85,Taipei
-2,Bob,EE,2,19,78,Taichung
-3,Charlie,CS,3,21,92,Taipei
-4,David,ME,2,20,66,Tainan
-5,Eva,CS,4,22,95,Kaohsiung
-6,Frank,EE,1,18,73,Taipei
-7,Grace,BA,3,21,88,Taichung
-8,Hank,ME,4,23,59,Tainan
-9,Ivy,CS,2,20,81,Kaohsiung
-10,Jack,EE,3,21,90,Taipei
-```
+## Main Functions
 
-## Program Design
+### 1. Load CSV
 
-The program is divided into several parts.
+The program reads `Data/students.csv` and stores the data in memory.
 
-### 1. Load CSV File
+The first row of the CSV file is treated as the header, and the remaining rows are treated as student records.
 
-The program opens `students.csv`, reads the first row as column headers, and reads the remaining rows as data records.
+---
 
-Main function:
+### 2. Display Records
 
-```cpp
-CSVTable loadCSV(const string& filename);
-```
+The program can display all student records in a readable format.
 
-The data is stored in this structure:
+This helps users check the current data inside the CSV file.
 
-```cpp
-struct CSVTable {
-    vector<string> headers;
-    vector<vector<string>> rows;
-};
-```
+---
 
-### 2. Parse SELECT Query
+### 3. Search Records
 
-The program accepts a SQL-like query from the user.
+The program allows users to search data based on column values.
 
-Supported format:
+For example, users can search by:
 
-```sql
-SELECT columns FROM students WHERE condition ORDER BY column ASC/DESC;
-```
+* name;
+* department;
+* grade;
+* city;
+* score.
 
-Examples:
+This makes it easier to find specific student records.
 
-```sql
-SELECT * FROM students;
-```
+---
 
-```sql
-SELECT name, score FROM students;
-```
+### 4. Insert Student
 
-```sql
-SELECT * FROM students WHERE department = 'CS';
-```
+The insert function allows users to add a new student record.
 
-```sql
-SELECT name, department, score FROM students WHERE score >= 80 ORDER BY score DESC;
-```
+Before inserting the data, the program checks whether the input is valid.
 
-### 3. Select Columns
+The program checks:
 
-If the user enters:
+* whether the ID already exists;
+* whether required fields are empty;
+* whether grade, age, and score are numbers;
+* whether the score is between 0 and 100;
+* whether the grade is in a reasonable range.
 
-```sql
-SELECT * FROM students;
-```
+This prevents invalid data from being inserted into the CSV file.
 
-the program displays all columns.
+---
 
-If the user enters:
+### 5. Save CSV
 
-```sql
-SELECT name, score FROM students;
-```
+After inserting a new record, the program can save the updated data back to `Data/students.csv`.
 
-the program only displays the `name` and `score` columns.
+This makes the inserted data persistent, so the new record will still exist after the program closes.
 
-### 4. Filter Records with WHERE
+---
 
-The program supports simple conditions such as:
+## Why I Designed the Program This Way
 
-```sql
-WHERE score >= 80
-```
+I designed the program to first load the CSV data into memory, then perform operations such as display, search, and insert.
 
-```sql
-WHERE department = 'CS'
-```
+This design makes the program easier to manage because all records can be processed in memory before saving them back to the CSV file.
 
-Supported operators:
+For the insert function, I added validation because directly appending data without checking may cause problems.
 
-| Operator | Meaning |
-|---|---|
-| `=` | equal to |
-| `==` | equal to |
-| `!=` | not equal to |
-| `>` | greater than |
-| `<` | less than |
-| `>=` | greater than or equal to |
-| `<=` | less than or equal to |
+For example:
 
-### 5. Sort Results with ORDER BY
+* duplicate IDs may make records confusing;
+* empty names or departments make records incomplete;
+* invalid scores make the data unreasonable;
+* non-number values in grade, age, or score may cause errors.
 
-The program can sort query results.
+Because of this, the program checks the input before adding a new record.
 
-Example:
-
-```sql
-SELECT * FROM students ORDER BY score DESC;
-```
-
-This sorts students by score from high to low.
+---
 
 ## How to Compile
 
-Use `g++` to compile the program.
+From the project root folder, use:
 
-```bash
-g++ csv_select.cpp -o csv_select
-```
+`g++ -std=c++17 -Wall -Wextra -o csv_database src/main.cpp`
+
+This will create an executable file named:
+
+`csv_database`
+
+---
 
 ## How to Run
 
-Make sure `students.csv` and the compiled program are in the same folder.
+### Linux / Git Bash / WSL
 
-```bash
-./csv_select
-```
+`./csv_database Data/students.csv`
 
-On Windows, use:
+### Windows PowerShell
 
-```bash
-csv_select.exe
-```
+`.\csv_database.exe Data/students.csv`
 
-## Example Usage
+---
 
-Input:
+## Reflection
 
-```sql
-SELECT name, department, score FROM students WHERE score >= 80 ORDER BY score DESC;
-```
+Through this source code, I learned that a program should not only work with correct input. It should also handle incorrect input carefully.
 
-Output:
+I also learned that code organization and clear function design are important. When a project becomes larger, separating different tasks into different functions makes the program easier to read, debug, and explain.
 
-```text
-name     department  score
-----     ----------  -----
-Eva      CS          95
-Charlie  CS          92
-Jack     EE          90
-Grace    BA          88
-Alice    CS          85
-Ivy      CS          81
-
-Total rows: 6
-```
-
-## What I Learned
-
-Through this project, I learned how to use C++ to process CSV data and simulate a simple database query.
-
-I also learned that a `SELECT` function is not only about printing data.  
-It includes several important steps:
-
-1. Reading the file
-2. Understanding column names
-3. Parsing user input
-4. Filtering rows
-5. Selecting columns
-6. Sorting the result
-7. Displaying the result clearly
-
-## AI-Assisted Development Reflection
-
-AI helped me design the structure of the program and think about what functions a simple CSV database should include.
-
-However, I still needed to understand the code by myself, check whether the query examples worked correctly, and make sure the program matched the requirements of my course project.
-
-## Future Improvements
-
-In the future, this project can be improved by adding:
-
-- INSERT function
-- UPDATE function
-- DELETE function
-- More complete SQL syntax
-- Better error handling
-- Support for multiple CSV files
-- Saving query results to another file
+AI tools helped me design and improve the program, but I still needed to test the program by myself and make sure the output was correct.
