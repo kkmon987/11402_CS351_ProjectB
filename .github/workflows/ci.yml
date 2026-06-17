@@ -1,0 +1,34 @@
+name: Project B C++ CI
+
+on:
+  push:
+    branches: [ main ,KAN-14-test-the-cpp]
+  pull_request:
+    branches: [ main ,KAN-14-test-the-cpp ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: sudo apt-get update && sudo apt-get install -y build-essential
+
+      - name: Check required files
+        run: |
+          test -f src/main.cpp
+          test -f Data/students.csv
+          test -f README.md
+
+      - name: Compile CSV Mini Database
+        run: |
+          mkdir -p build
+          g++ -std=c++17 -Wall -Wextra src/main.cpp -o build/csv_database
+
+      - name: Verify executable exists
+        run: |
+          test -f build/csv_database
+          echo "Project B build successful."
