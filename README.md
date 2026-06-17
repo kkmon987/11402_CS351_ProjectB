@@ -1,18 +1,53 @@
-# Project B: CSV Mini Database
+# Project B: CSV Mini Database - SELECT Query Engine
 
 ## 1. Project Overview
 
-This project is **Project B** for the course **CS351/IN321: AI-assisted Software Development**.
+This project is Project B for the course **CS351 / IN321: AI-assisted Software Development**.
 
-The goal of this project is to build a small CSV-based database program using **C++**.
+The goal of this project is to build a small CSV-based mini database using **C++17**.
+The current implementation focuses on a SQL-like **SELECT query engine** for student data stored in a CSV file.
 
-The program can load student data from a CSV file, display records, search records, insert new student data, and save the updated data back to the CSV file.
+The program can:
 
-This project helped me practice CSV file handling, basic database-like operations, input validation, project organization, and GitHub workflow.
+* Load student data from a CSV file
+* Store CSV headers and rows in memory
+* Select all columns or specific columns
+* Filter records using `WHERE`
+* Sort query results using `ORDER BY`
+* Print the selected result as a readable table
+
+This project helped me practice CSV file handling, simple query parsing, conditional filtering, sorting, output formatting, project organization, GitHub workflow, and AI-assisted development verification.
 
 ---
 
-## 2. Data Design
+## 2. Current Implementation Scope
+
+The current source code focuses on the following query features:
+
+| Feature                 | Status      | Description                                                      |
+| ----------------------- | ----------- | ---------------------------------------------------------------- |
+| Load CSV file           | Implemented | Reads `Data/students.csv` and stores the data in memory          |
+| `SELECT *`              | Implemented | Displays all columns                                             |
+| Select specific columns | Implemented | Displays only selected columns, such as `name` and `score`       |
+| `WHERE` filtering       | Implemented | Filters rows by a condition, such as department or score         |
+| `ORDER BY` sorting      | Implemented | Sorts query results in ascending or descending order             |
+| Table output            | Implemented | Prints query results in a readable table format                  |
+| GitHub Actions CI       | Implemented | Automatically checks required files and compiles the C++ program |
+
+The following features are **not the current main implementation** and are listed as future improvements:
+
+* Insert new records
+* Update existing records
+* Delete records
+* Save modified data back to CSV
+* `COUNT`
+* `AVG`
+* `GROUP BY`
+* More complete SQL syntax support
+
+---
+
+## 3. Data Design
 
 The project uses a CSV file located at:
 
@@ -20,9 +55,7 @@ The project uses a CSV file located at:
 Data/students.csv
 ```
 
-The CSV file stores student information. Each row represents one student record, and each column represents one attribute of the student.
-
-The CSV data uses the following columns:
+The CSV data is designed with the following columns:
 
 | Column       | Meaning             |
 | ------------ | ------------------- |
@@ -40,99 +73,87 @@ Example data:
 id,name,department,grade,age,score,city
 1,Alice,CS,1,18,85,Taipei
 2,Bob,EE,2,19,78,Taichung
-3,Charlie,CS,3,20,90,Tainan
+3,Charlie,CS,3,21,92,Taipei
 ```
 
-I designed the data this way because it is simple and easy to understand.
-
-The `id` field is used as the unique identifier for each student. Because of this, the program checks whether an ID already exists before inserting a new student record.
+Each row represents one student record, and each column represents one attribute of the student.
+The dataset is simple enough for demonstration, but it is also useful for practicing basic database-like operations such as selecting, filtering, and sorting data.
 
 ---
 
-## 3. Features
+## 4. Supported Query Examples
 
-This program currently supports the following functions:
+### Select all records
 
-### 1. Load CSV
+```sql
+SELECT * FROM students;
+```
 
-The program reads student data from:
+### Select specific columns
+
+```sql
+SELECT name, score FROM students;
+```
+
+### Filter records with `WHERE`
+
+```sql
+SELECT * FROM students WHERE department = 'CS';
+```
+
+```sql
+SELECT * FROM students WHERE score >= 80;
+```
+
+```sql
+SELECT * FROM students WHERE city = 'Taipei';
+```
+
+### Sort records with `ORDER BY`
+
+```sql
+SELECT * FROM students ORDER BY score DESC;
+```
+
+```sql
+SELECT name, department, score FROM students WHERE score >= 80 ORDER BY score DESC;
+```
+
+---
+
+## 5. Query Workflow
+
+The program follows this basic workflow:
 
 ```text
-Data/students.csv
+Load CSV
+   ↓
+Read SELECT query
+   ↓
+Parse selected columns
+   ↓
+Apply WHERE condition if provided
+   ↓
+Apply ORDER BY sorting if provided
+   ↓
+Print result table
 ```
 
-Then it stores the data in memory for later operations.
+Key implementation ideas:
 
-### 2. Display Records
-
-The program can display all student records in a readable format.
-
-This allows the user to check the current data inside the CSV file.
-
-### 3. Search Records
-
-The program can search records based on column values.
-
-For example, the user can search by:
-
-* `id`
-* `name`
-* `department`
-* `grade`
-* `age`
-* `score`
-* `city`
-
-This function helps the user find specific student records more easily.
-
-### 4. Insert Student
-
-The program allows the user to insert a new student record.
-
-During insertion, the program checks:
-
-* whether the student ID already exists;
-* whether required fields are empty;
-* whether `grade`, `age`, and `score` are valid numbers;
-* whether `grade` is in a reasonable range;
-* whether `score` is between 0 and 100.
-
-### 5. Save CSV
-
-After inserting new data, the program can save the updated records back to:
-
-```text
-Data/students.csv
-```
-
-This means the inserted data will still exist after the program closes.
+* CSV lines are split into fields.
+* The first row is treated as the header row.
+* Column names are used to find column indexes.
+* `WHERE` conditions are parsed into column, operator, and value.
+* Numeric values can be compared numerically.
+* Text values can be compared as strings.
+* `ORDER BY` supports ascending and descending sorting.
 
 ---
 
-## 4. Why I Designed the Insert Function This Way
+## 6. Project Structure
 
-The insert function is an important part of this project.
-
-I did not only append a new row directly into the CSV file. Instead, I added basic validation before inserting the data.
-
-The reason is that invalid data can make the CSV database difficult to use later.
-
-For example:
-
-* If two students have the same `id`, the program may not know which record is correct.
-* If `score` is greater than 100, the data is unreasonable.
-* If `name`, `department`, or `city` is empty, the record is incomplete.
-* If `grade`, `age`, or `score` is not a number, the program may produce incorrect results.
-
-Because of this, I designed the insert function to check the input first.
-
-Only valid data can be inserted into the database. This makes the program more reliable and closer to a real database system.
-
----
-
-## 5. Project Structure
-
-The current project is organized as follows:
+The project is organized as follows:
 
 ```text
 11402_CS351_ProjectB/
@@ -154,111 +175,108 @@ The current project is organized as follows:
 
 ### Folder Explanation
 
-| Path                       | Description                          |
-| -------------------------- | ------------------------------------ |
-| `.github/workflows/ci.yml` | GitHub Actions CI workflow           |
-| `Data/students.csv`        | Student CSV data                     |
-| `Data/README.md`           | Explanation of the CSV data design   |
-| `src/main.cpp`             | Main C++ source code                 |
-| `src/README.md`            | Explanation of the source code       |
-| `README.md`                | Project introduction and usage guide |
+| Path                       | Description                               |
+| -------------------------- | ----------------------------------------- |
+| `.github/workflows/ci.yml` | GitHub Actions CI workflow                |
+| `Data/students.csv`        | Sample student dataset                    |
+| `Data/README.md`           | Dataset description and query examples    |
+| `src/main.cpp`             | Main C++ source code                      |
+| `src/README.md`            | Source-code feature description           |
+| `README.md`                | Root project introduction and usage guide |
 
 ---
 
-## 6. Requirements
+## 7. Requirements
 
 To compile and run this project, you need:
 
-* C++ compiler with C++17 support
-* `g++` is recommended
-* GitHub Actions is used for CI checking
+* A C++ compiler with C++17 support
+* `g++` recommended
+* Git or GitHub Codespaces / local terminal
+* GitHub Actions is used for automatic CI build checking
 
 ---
 
-## 7. How to Compile
+## 8. How to Compile
 
-From the project root folder, use the following command:
+Use the following command from the project root directory:
 
 ```bash
-g++ -std=c++17 -Wall -Wextra -o csv_database src/main.cpp
+mkdir -p build
+g++ -std=c++17 -Wall -Wextra src/main.cpp -o build/csv_database
 ```
 
-This command compiles the C++ program and creates an executable file named:
+This command compiles the C++ program and creates an executable file at:
 
 ```text
-csv_database
-```
-
-On Windows, the executable may be:
-
-```text
-csv_database.exe
+build/csv_database
 ```
 
 ---
 
-## 8. How to Run
+## 9. How to Run
 
 ### Linux / Git Bash / WSL
 
 ```bash
-./csv_database Data/students.csv
+./build/csv_database Data/students.csv
 ```
 
 ### Windows PowerShell
 
 ```powershell
-.\csv_database.exe Data/students.csv
+.\build\csv_database.exe Data\students.csv
+```
+
+After running the program, enter a supported `SELECT` query.
+
+Example:
+
+```sql
+SELECT name, department, score FROM students WHERE score >= 80 ORDER BY score DESC;
 ```
 
 ---
 
-## 9. Example Insert Demo
+## 10. Example Demo
 
-When demonstrating the insert function, I can insert a new student such as:
+Input query:
 
-```text
-id: 11
-name: Kevin
-department: CS
-grade: 2
-age: 20
-score: 87
-city: Taipei
+```sql
+SELECT name, department, score FROM students WHERE score >= 80 ORDER BY score DESC;
 ```
 
-Expected result:
+Expected behavior:
 
-```text
-Student inserted successfully.
-```
+* Load the student CSV file
+* Select only the `name`, `department`, and `score` columns
+* Keep only students whose score is greater than or equal to 80
+* Sort the result by score from high to low
+* Print the result as a table
 
-After saving, the new record will be added to:
-
-```text
-Data/students.csv
-```
+This is the strongest live demo case because it shows column selection, filtering, sorting, and formatted output in one query.
 
 ---
 
-## 10. Test Cases
+## 11. Test Cases
 
-I tested the program with several cases:
+The project can be tested with the following manual test cases:
 
-| Test Case              | Purpose                                  | Expected Result                      |
-| ---------------------- | ---------------------------------------- | ------------------------------------ |
-| Display all records    | Check if CSV data can be shown correctly | All records are displayed            |
-| Search department = CS | Check search function                    | Only CS students are displayed       |
-| Insert valid student   | Check normal insert                      | New student is inserted successfully |
-| Insert duplicate ID    | Check ID validation                      | Program shows duplicate ID error     |
-| Insert invalid score   | Check score validation                   | Program shows score range error      |
-| Insert empty name      | Check required field validation          | Program shows empty field error      |
+| Test Case                                         | Purpose                                    | Expected Result                           |
+| ------------------------------------------------- | ------------------------------------------ | ----------------------------------------- |
+| `SELECT * FROM students;`                         | Check whether all records can be displayed | All rows and columns are shown            |
+| `SELECT name, score FROM students;`               | Check column selection                     | Only `name` and `score` are shown         |
+| `SELECT * FROM students WHERE department = 'CS';` | Check text filtering                       | Only CS students are shown                |
+| `SELECT * FROM students WHERE score >= 80;`       | Check numeric comparison                   | Only students with score >= 80 are shown  |
+| `SELECT * FROM students ORDER BY score DESC;`     | Check sorting                              | Rows are sorted by score from high to low |
+| Invalid column name                               | Check error handling                       | Program shows a column-not-found message  |
+| Invalid query format                              | Check query validation                     | Program shows an invalid-query message    |
 
-These test cases help me check whether the program works correctly and whether the insert function handles incorrect input.
+These test cases help verify that the SELECT query engine works correctly for normal cases and basic error cases.
 
 ---
 
-## 11. GitHub Actions CI
+## 12. GitHub Actions CI
 
 This project includes a GitHub Actions workflow:
 
@@ -266,67 +284,74 @@ This project includes a GitHub Actions workflow:
 .github/workflows/ci.yml
 ```
 
-The CI workflow is used to check whether the project can build successfully on GitHub.
+The CI workflow runs automatically when code is pushed to GitHub or when a pull request is created for the configured branches.
 
-The CI checks:
+The CI workflow checks:
 
-* whether important files exist;
-* whether `src/main.cpp` can be compiled;
-* whether the executable file can be created successfully.
+* Whether `src/main.cpp` exists
+* Whether `Data/students.csv` exists
+* Whether `README.md` exists
+* Whether the C++ program can be compiled with `g++ -std=c++17 -Wall -Wextra`
+* Whether the executable file is created successfully
 
-This helps me make sure the project can still build correctly after I push changes to GitHub.
+This helps make sure the project can still build correctly after changes.
 
 ---
 
-## 12. What I Learned
+## 13. What I Learned
 
-Through this project, I learned how to build a small CSV-based database program.
+Through this project, I learned how to build a small CSV-based query program.
 
 I practiced:
 
-* reading CSV files;
-* storing records in memory;
-* displaying data;
-* searching records;
-* inserting new data;
-* validating user input;
-* saving data back to CSV;
-* organizing project files;
-* writing README documentation;
-* using GitHub Actions for CI.
+* Reading CSV files
+* Storing structured data in memory
+* Parsing simple SQL-like commands
+* Selecting specific columns
+* Filtering rows with conditions
+* Sorting query results
+* Formatting output tables
+* Organizing project files
+* Writing README documentation
+* Using GitHub Actions for CI
 
-The most important thing I learned is that a program should not only work under normal input. It should also handle incorrect input carefully.
+The most important thing I learned is that a software project should match its documentation.
+If the code only supports SELECT queries, the README should clearly explain the SELECT feature instead of claiming unsupported functions.
 
 ---
 
-## 13. AI-Assisted Development Reflection
+## 14. AI-Assisted Development Reflection
 
-I used AI tools to help me understand the project requirements, design the program structure, write explanations, and debug some problems.
+I used AI tools to help me understand the project requirements, design the README structure, explain the program workflow, and review whether the documentation matched the actual source code.
 
 However, I did not only copy AI-generated results.
 
 I still needed to:
 
-* read the code;
-* test the program;
-* check whether the output was correct;
-* modify the README to match my actual project;
-* make sure the insert function fits my CSV data design.
+* Read the source code
+* Check the actual implemented functions
+* Compare the README with the program behavior
+* Run or review test cases
+* Correct documentation that did not match the implementation
 
-Through this process, I learned that AI can be a useful assistant, but I still need to understand and verify the final result by myself.
+Through this process, I learned that AI can be a useful assistant, but I still need to verify the final result by myself.
 
 ---
 
-## 14. Future Improvements
+## 15. Future Improvements
 
 In the future, I would like to improve this project by adding more functions, such as:
 
-* update existing records;
-* delete records;
-* support more flexible search conditions;
-* improve CSV parsing;
-* add automatic test scripts;
-* improve user interface;
-* separate the code into multiple files.
+* Insert new records
+* Update existing records
+* Delete records
+* Save modified data back to CSV
+* Support `COUNT`
+* Support `AVG`
+* Support `GROUP BY`
+* Improve CSV parsing for quoted fields and commas inside text
+* Add automatic test scripts
+* Improve error handling
+* Separate the code into multiple files
 
 These improvements would make the project closer to a more complete mini database system.
