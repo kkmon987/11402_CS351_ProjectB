@@ -20,7 +20,9 @@ The project uses a CSV file located at:
 Data/students.csv
 ```
 
-The CSV data is designed with the following columns:
+The CSV file stores student information. Each row represents one student record, and each column represents one attribute of the student.
+
+The CSV data uses the following columns:
 
 | Column       | Meaning             |
 | ------------ | ------------------- |
@@ -43,9 +45,7 @@ id,name,department,grade,age,score,city
 
 I designed the data this way because it is simple and easy to understand.
 
-Each row represents one student record, and each column represents one attribute of the student.
-
-The `id` field is used as the unique identifier. Because of this, the program checks whether an ID already exists before inserting a new student.
+The `id` field is used as the unique identifier for each student. Because of this, the program checks whether an ID already exists before inserting a new student record.
 
 ---
 
@@ -55,15 +55,35 @@ This program currently supports the following functions:
 
 ### 1. Load CSV
 
-The program reads student data from `Data/students.csv` and stores it in memory.
+The program reads student data from:
+
+```text
+Data/students.csv
+```
+
+Then it stores the data in memory for later operations.
 
 ### 2. Display Records
 
 The program can display all student records in a readable format.
 
+This allows the user to check the current data inside the CSV file.
+
 ### 3. Search Records
 
-The program can search records based on column values, such as department, city, or name.
+The program can search records based on column values.
+
+For example, the user can search by:
+
+* `id`
+* `name`
+* `department`
+* `grade`
+* `age`
+* `score`
+* `city`
+
+This function helps the user find specific student records more easily.
 
 ### 4. Insert Student
 
@@ -73,17 +93,23 @@ During insertion, the program checks:
 
 * whether the student ID already exists;
 * whether required fields are empty;
-* whether grade, age, and score are valid numbers;
-* whether grade is in a reasonable range;
-* whether score is between 0 and 100.
+* whether `grade`, `age`, and `score` are valid numbers;
+* whether `grade` is in a reasonable range;
+* whether `score` is between 0 and 100.
 
 ### 5. Save CSV
 
-After inserting data, the program can save the updated records back to the CSV file.
+After inserting new data, the program can save the updated records back to:
+
+```text
+Data/students.csv
+```
+
+This means the inserted data will still exist after the program closes.
 
 ---
 
-## 4. Why I Designed Insert This Way
+## 4. Why I Designed the Insert Function This Way
 
 The insert function is an important part of this project.
 
@@ -95,12 +121,12 @@ For example:
 
 * If two students have the same `id`, the program may not know which record is correct.
 * If `score` is greater than 100, the data is unreasonable.
-* If `name` or `department` is empty, the record is incomplete.
+* If `name`, `department`, or `city` is empty, the record is incomplete.
 * If `grade`, `age`, or `score` is not a number, the program may produce incorrect results.
 
-Because of this, I designed the insert function to check the input first. Only valid data can be inserted into the database.
+Because of this, I designed the insert function to check the input first.
 
-This makes the program more reliable and closer to a real database system.
+Only valid data can be inserted into the database. This makes the program more reliable and closer to a real database system.
 
 ---
 
@@ -116,9 +142,11 @@ The current project is organized as follows:
 │       └── ci.yml
 │
 ├── Data/
+│   ├── README.md
 │   └── students.csv
 │
 ├── src/
+│   ├── README.md
 │   └── main.cpp
 │
 └── README.md
@@ -129,8 +157,10 @@ The current project is organized as follows:
 | Path                       | Description                          |
 | -------------------------- | ------------------------------------ |
 | `.github/workflows/ci.yml` | GitHub Actions CI workflow           |
-| `Data/students.csv`        | Sample student CSV data              |
+| `Data/students.csv`        | Student CSV data                     |
+| `Data/README.md`           | Explanation of the CSV data design   |
 | `src/main.cpp`             | Main C++ source code                 |
+| `src/README.md`            | Explanation of the source code       |
 | `README.md`                | Project introduction and usage guide |
 
 ---
@@ -140,20 +170,30 @@ The current project is organized as follows:
 To compile and run this project, you need:
 
 * C++ compiler with C++17 support
-* g++ recommended
-* GitHub Actions is used for CI testing
+* `g++` is recommended
+* GitHub Actions is used for CI checking
 
 ---
 
 ## 7. How to Compile
 
-Use the following command:
+From the project root folder, use the following command:
 
 ```bash
 g++ -std=c++17 -Wall -Wextra -o csv_database src/main.cpp
 ```
 
-This command compiles the C++ program and creates an executable file named `csv_database`.
+This command compiles the C++ program and creates an executable file named:
+
+```text
+csv_database
+```
+
+On Windows, the executable may be:
+
+```text
+csv_database.exe
+```
 
 ---
 
@@ -205,14 +245,14 @@ Data/students.csv
 
 I tested the program with several cases:
 
-| Test Case              | Purpose                                  | Expected Result                  |
-| ---------------------- | ---------------------------------------- | -------------------------------- |
-| Display all records    | Check if CSV data can be shown correctly | All records are displayed        |
-| Search department = CS | Check search function                    | Only CS students are displayed   |
-| Insert valid student   | Check normal insert                      | New student is inserted          |
-| Insert duplicate ID    | Check ID validation                      | Program shows duplicate ID error |
-| Insert invalid score   | Check score validation                   | Program shows score range error  |
-| Insert empty name      | Check required field validation          | Program shows empty field error  |
+| Test Case              | Purpose                                  | Expected Result                      |
+| ---------------------- | ---------------------------------------- | ------------------------------------ |
+| Display all records    | Check if CSV data can be shown correctly | All records are displayed            |
+| Search department = CS | Check search function                    | Only CS students are displayed       |
+| Insert valid student   | Check normal insert                      | New student is inserted successfully |
+| Insert duplicate ID    | Check ID validation                      | Program shows duplicate ID error     |
+| Insert invalid score   | Check score validation                   | Program shows score range error      |
+| Insert empty name      | Check required field validation          | Program shows empty field error      |
 
 These test cases help me check whether the program works correctly and whether the insert function handles incorrect input.
 
@@ -226,7 +266,7 @@ This project includes a GitHub Actions workflow:
 .github/workflows/ci.yml
 ```
 
-The CI workflow runs automatically when I push code to GitHub or create a pull request.
+The CI workflow is used to check whether the project can build successfully on GitHub.
 
 The CI checks:
 
@@ -234,7 +274,7 @@ The CI checks:
 * whether `src/main.cpp` can be compiled;
 * whether the executable file can be created successfully.
 
-This helps me make sure the project can still build correctly after I make changes.
+This helps me make sure the project can still build correctly after I push changes to GitHub.
 
 ---
 
