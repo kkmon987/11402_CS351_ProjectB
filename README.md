@@ -1,133 +1,295 @@
-# Project B: CSV Mini Database & Query Engine
+# Project B: CSV Mini Database
 
-## Overview
+## 1. Project Overview
 
-This project implements a lightweight, in-memory database engine that can load and query CSV (Comma-Separated Values) files using a simplified SQL-like query language. The system provides basic database operations such as data loading, querying, filtering, joining, and aggregation, making it suitable for small-scale data analysis and educational purposes.
+This project is **Project B** for the course **CS351/IN321: AI-assisted Software Development**.
 
-## Features
+The goal of this project is to build a small CSV-based database program using **C++**.
+The program can load student data from a CSV file, display records, search records, insert new student data, and save the updated data back to the CSV file.
 
-- **CSV Data Loading**: Load CSV files into in-memory tables with automatic type inference
-- **SQL-like Query Language**: Support for SELECT, FROM, WHERE, JOIN, GROUP BY, and ORDER BY clauses
-- **Data Types**: Support for integers, floats, strings, and dates
-- **Aggregation Functions**: COUNT, SUM, AVG, MIN, MAX
-- **Query Optimization**: Basic query planning and execution optimization
-- **Result Output**: Export query results to CSV or display in console
-- **Error Handling**: Comprehensive error reporting for malformed queries and data issues
+This project helped me practice basic database-like operations, CSV file handling, input validation, project organization, and GitHub workflow.
 
-## Requirements
+---
 
-- Python 3.8 or higher
-- No external dependencies (uses only standard library)
+## 2. Data Design
 
-## Installation
+The project uses a CSV file named:
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/kkmon987/11402_CS351_ProjectB.git
-   cd 11402_CS351_ProjectB
-   ```
-
-2. Ensure Python 3.8+ is installed:
-   ```bash
-   python --version
-   ```
-
-## Usage
-
-### Loading Data
-
-```python
-from csv_db import Database
-
-db = Database()
-db.load_table('users', 'data/users.csv')
-db.load_table('orders', 'data/orders.csv')
+```text
+students.csv
 ```
 
-### Running Queries
+The CSV data is designed with the following columns:
 
-```python
-# Simple SELECT
-result = db.query("SELECT name, age FROM users WHERE age > 25")
+| Column       | Meaning             |
+| ------------ | ------------------- |
+| `id`         | Student ID          |
+| `name`       | Student name        |
+| `department` | Student department  |
+| `grade`      | Student grade level |
+| `age`        | Student age         |
+| `score`      | Student score       |
+| `city`       | Student city        |
 
-# JOIN operation
-result = db.query("""
-    SELECT u.name, o.product, o.amount
-    FROM users u
-    JOIN orders o ON u.id = o.user_id
-    WHERE o.amount > 100
-""")
+Example data:
 
-# Aggregation
-result = db.query("""
-    SELECT department, COUNT(*), AVG(salary)
-    FROM employees
-    GROUP BY department
-""")
+```csv
+id,name,department,grade,age,score,city
+1,Alice,CS,1,18,85,Taipei
+2,Bob,EE,2,19,78,Taichung
+3,Charlie,CS,3,20,90,Tainan
 ```
 
-### Exporting Results
+I designed the data this way because it is simple and easy to understand.
+Each row represents one student record, and each column represents one attribute of the student.
 
-```python
-result.save_to_csv('output/results.csv')
-```
+The `id` field is used as the unique identifier, so the program checks whether an ID already exists before inserting a new student.
 
-## Architecture
+---
 
-The system consists of several key components:
+## 3. Features
 
-- **Parser**: Converts SQL-like strings into abstract syntax trees
-- **Query Planner**: Optimizes query execution plans
-- **Executor**: Executes queries on in-memory data structures
-- **Storage Engine**: Manages CSV file loading and in-memory table storage
-- **Type System**: Handles data type inference and conversion
+This program currently supports the following functions:
 
-## Project Structure
+### 1. Load CSV
 
-```
+The program reads student data from `students.csv` and stores it in memory.
+
+### 2. Display Records
+
+The program can display all student records in a readable format.
+
+### 3. Search Records
+
+The program can search records based on column values, such as department, city, or name.
+
+### 4. Insert Student
+
+The program allows the user to insert a new student record.
+
+During insertion, the program checks:
+
+* whether the student ID already exists;
+* whether required fields are empty;
+* whether grade, age, and score are valid numbers;
+* whether grade is in a reasonable range;
+* whether score is between 0 and 100.
+
+### 5. Save CSV
+
+After inserting data, the program can save the updated records back to the CSV file.
+
+---
+
+## 4. Why I Designed Insert This Way
+
+The insert function is an important part of this project.
+
+I did not only append a new row directly into the CSV file.
+Instead, I added basic validation before inserting the data.
+
+The reason is that invalid data can make the CSV database difficult to use later.
+
+For example:
+
+* If two students have the same `id`, the program may not know which record is correct.
+* If `score` is greater than 100, the data is unreasonable.
+* If `name` or `department` is empty, the record is incomplete.
+* If `grade`, `age`, or `score` is not a number, the program may produce incorrect results.
+
+Because of this, I designed the insert function to check the input first.
+Only valid data can be inserted into the database.
+
+This makes the program more reliable and closer to a real database system.
+
+---
+
+## 5. Project Structure
+
+The project is organized as follows:
+
+```text
 11402_CS351_ProjectB/
-├── csv_db/
-│   ├── __init__.py
-│   ├── parser.py
-│   ├── planner.py
-│   ├── executor.py
-│   ├── storage.py
-│   └── types.py
-├── tests/
-│   ├── test_parser.py
-│   ├── test_executor.py
-│   └── test_integration.py
-├── data/
-│   └── sample_data.csv
-├── examples/
-│   └── demo.py
-├── README.md
-└── requirements.txt
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+│
+├── docs/
+│   └── reflection.md
+│
+├── src/
+│   └── main.cpp
+│
+├── testcase/
+│   └── test_cases.md
+│
+├── students.csv
+└── README.md
 ```
 
-## Testing
+### Folder Explanation
 
-Run the test suite:
+| Path                       | Description                          |
+| -------------------------- | ------------------------------------ |
+| `.github/workflows/ci.yml` | GitHub Actions CI workflow           |
+| `src/main.cpp`             | Main C++ source code                 |
+| `students.csv`             | Sample student CSV data              |
+| `testcase/test_cases.md`   | Manual test cases                    |
+| `docs/reflection.md`       | Project reflection                   |
+| `README.md`                | Project introduction and usage guide |
+
+---
+
+## 6. Requirements
+
+To compile and run this project, you need:
+
+* C++ compiler with C++17 support
+* g++ recommended
+* GitHub Actions is used for CI testing
+
+---
+
+## 7. How to Compile
+
+Use the following command:
 
 ```bash
-python -m pytest tests/
+g++ -std=c++17 -Wall -Wextra -o csv_database src/main.cpp
 ```
 
-## Contributing
+This command compiles the C++ program and creates an executable file named `csv_database`.
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Submit a pull request
+---
 
-## License
+## 8. How to Run
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+### Linux / Git Bash / WSL
 
-## Course Information
+```bash
+./csv_database students.csv
+```
 
-- **Course**: CS351 - Database Systems
-- **Project**: B
-- **Due Date**: [Insert due date]
-- **Team Members**: [Insert team members]
+### Windows PowerShell
+
+```powershell
+.\csv_database.exe students.csv
+```
+
+---
+
+## 9. Example Insert Demo
+
+When demonstrating the insert function, I can insert a new student such as:
+
+```text
+id: 11
+name: Kevin
+department: CS
+grade: 2
+age: 20
+score: 87
+city: Taipei
+```
+
+Expected result:
+
+```text
+Student inserted successfully.
+```
+
+After saving, the new record will be added to `students.csv`.
+
+---
+
+## 10. Test Cases
+
+I tested the program with several cases:
+
+| Test Case              | Purpose                                  | Expected Result                  |
+| ---------------------- | ---------------------------------------- | -------------------------------- |
+| Display all records    | Check if CSV data can be shown correctly | All records are displayed        |
+| Search department = CS | Check search function                    | Only CS students are displayed   |
+| Insert valid student   | Check normal insert                      | New student is inserted          |
+| Insert duplicate ID    | Check ID validation                      | Program shows duplicate ID error |
+| Insert invalid score   | Check score validation                   | Program shows score range error  |
+| Insert empty name      | Check required field validation          | Program shows empty field error  |
+
+These test cases help me check whether the program works correctly and whether the insert function handles incorrect input.
+
+---
+
+## 11. GitHub Actions CI
+
+This project includes a GitHub Actions workflow:
+
+```text
+.github/workflows/ci.yml
+```
+
+The CI workflow runs automatically when I push code to GitHub or create a pull request.
+
+The CI checks:
+
+* whether important files exist;
+* whether `src/main.cpp` can be compiled;
+* whether the executable file can be created successfully.
+
+This helps me make sure the project can still build correctly after I make changes.
+
+---
+
+## 12. What I Learned
+
+Through this project, I learned how to build a small CSV-based database program.
+
+I practiced:
+
+* reading CSV files;
+* storing records in memory;
+* displaying data;
+* searching records;
+* inserting new data;
+* validating user input;
+* saving data back to CSV;
+* organizing project files;
+* writing README documentation;
+* using GitHub Actions for CI.
+
+The most important thing I learned is that a program should not only work under normal input.
+It should also handle incorrect input carefully.
+
+---
+
+## 13. AI-Assisted Development Reflection
+
+I used AI tools to help me understand the project requirements, design the program structure, write explanations, and debug some problems.
+
+However, I did not only copy AI-generated results.
+
+I still needed to:
+
+* read the code;
+* test the program;
+* check whether the output was correct;
+* modify the README to match my actual project;
+* make sure the insert function fits my CSV data design.
+
+Through this process, I learned that AI can be a useful assistant, but I still need to understand and verify the final result by myself.
+
+---
+
+## 14. Future Improvements
+
+In the future, I would like to improve this project by adding more functions, such as:
+
+* update existing records;
+* delete records;
+* support more flexible search conditions;
+* improve CSV parsing;
+* add automatic test scripts;
+* improve user interface;
+* separate the code into multiple files.
+
+These improvements would make the project closer to a more complete mini database system.
