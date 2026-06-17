@@ -1,32 +1,33 @@
 # Data Folder
 
-## About This Folder
+## Overview
 
-This folder contains the CSV data used in **Project B: CSV Mini Database**.
+This folder stores the sample CSV dataset used by **Project B: CSV Mini Database - SELECT Query Engine**.
 
 The main data file is:
 
-`students.csv`
+```text
+students.csv
+```
 
-This CSV file stores student information and is used by the C++ program in `src/main.cpp`.
-
----
-
-## CSV File
-
-The data file is:
-
-`Data/students.csv`
-
-The CSV file contains student records. Each row represents one student, and each column represents one attribute of the student.
+The C++ program in `src/main.cpp` reads this CSV file, stores its headers and rows in memory, and allows the user to run simple SQL-like `SELECT` queries.
 
 ---
 
-## Data Format
+## Dataset File
 
-The CSV file uses the following columns:
+```text
+Data/students.csv
+```
 
-| Column       | Meaning             |
+The dataset contains student records.
+Each row represents one student, and each column represents one attribute.
+
+---
+
+## CSV Columns
+
+| Column       | Description         |
 | ------------ | ------------------- |
 | `id`         | Student ID          |
 | `name`       | Student name        |
@@ -38,82 +39,130 @@ The CSV file uses the following columns:
 
 ---
 
-## Example Data
+## Example Records
 
-Example records:
+| id | name    | department | grade | age | score | city      |
+| -- | ------- | ---------- | ----- | --- | ----- | --------- |
+| 1  | Alice   | CS         | 1     | 18  | 85    | Taipei    |
+| 2  | Bob     | EE         | 2     | 19  | 78    | Taichung  |
+| 3  | Charlie | CS         | 3     | 20  | 92    | Taipei    |
+| 4  | David   | ME         | 2     | 20  | 66    | Tainan    |
+| 5  | Eva     | CS         | 4     | 22  | 95    | Kaohsiung |
 
-| id | name    | department | grade | age | score | city     |
-| -- | ------- | ---------- | ----- | --- | ----- | -------- |
-| 1  | Alice   | CS         | 1     | 18  | 85    | Taipei   |
-| 2  | Bob     | EE         | 2     | 19  | 78    | Taichung |
-| 3  | Charlie | CS         | 3     | 20  | 90    | Tainan   |
-
----
-
-## Why I Designed the Data This Way
-
-I designed the CSV data to be simple and easy to understand.
-
-Each row stores one student record, and each column stores one piece of information about the student.
-
-This design is useful for practicing basic database-like operations such as:
-
-* loading data;
-* displaying records;
-* searching records;
-* inserting new data;
-* saving data back to the CSV file.
-
-The `id` column is used as the unique identifier for each student. Because of this, the program checks whether an ID already exists before inserting a new record.
-
----
-
-## Insert Data Rules
-
-When inserting a new student record, the data should follow these rules:
-
-| Field        | Rule                       |
-| ------------ | -------------------------- |
-| `id`         | Must be unique and numeric |
-| `name`       | Cannot be empty            |
-| `department` | Cannot be empty            |
-| `grade`      | Must be a valid number     |
-| `age`        | Must be a valid number     |
-| `score`      | Must be between 0 and 100  |
-| `city`       | Cannot be empty            |
-
-These rules help keep the CSV data clean and reasonable.
-
----
-
-## Example Insert Record
-
-A valid inserted record may look like this:
-
-| id | name  | department | grade | age | score | city   |
-| -- | ----- | ---------- | ----- | --- | ----- | ------ |
-| 11 | Kevin | CS         | 2     | 20  | 87    | Taipei |
-
-After insertion and saving, this new record will be written back to:
-
-`Data/students.csv`
+The full CSV file contains 10 student records.
 
 ---
 
 ## How the Program Uses This Data
 
-The C++ program reads `students.csv` when it starts.
+The program uses the CSV file as one simple table.
 
-The program stores the data in memory, then allows users to display records, search records, and insert new student data.
+The basic workflow is:
 
-After changes are made, the program can save the updated data back to the CSV file.
+```text
+Load students.csv
+→ Read the first row as headers
+→ Read the remaining rows as student records
+→ Store the data in memory
+→ Execute a user SELECT query
+→ Print the query result as a table
+```
+
+The suggested table name used in queries is:
+
+```text
+students
+```
+
+---
+
+## Supported Query Usage
+
+The current program supports `SELECT` queries on this dataset.
+
+### Select all columns
+
+```sql
+SELECT * FROM students;
+```
+
+### Select specific columns
+
+```sql
+SELECT name, score FROM students;
+```
+
+### Filter by department
+
+```sql
+SELECT * FROM students WHERE department = 'CS';
+```
+
+### Filter by score
+
+```sql
+SELECT * FROM students WHERE score >= 80;
+```
+
+### Sort by score
+
+```sql
+SELECT * FROM students ORDER BY score DESC;
+```
+
+### Combine column selection, filtering, and sorting
+
+```sql
+SELECT name, department, score FROM students WHERE score >= 80 ORDER BY score DESC;
+```
+
+---
+
+## Data Features for Demo
+
+This dataset is suitable for demonstrating:
+
+* Column selection
+* Text comparison, such as `department = 'CS'`
+* Numeric comparison, such as `score >= 80`
+* Sorting with `ORDER BY`
+* Readable table output
+
+Because the data includes different departments, scores, cities, and grade levels, it can clearly show how filtering and sorting change the query result.
+
+---
+
+## Current Scope
+
+The current program **only reads and queries** the CSV data.
+
+Implemented:
+
+| Feature                      | Status      |
+| ---------------------------- | ----------- |
+| Load CSV data                | Implemented |
+| Use the first row as headers | Implemented |
+| Select all columns           | Implemented |
+| Select specific columns      | Implemented |
+| Filter rows with `WHERE`     | Implemented |
+| Sort rows with `ORDER BY`    | Implemented |
+
+Not currently implemented:
+
+* Insert new rows
+* Update existing rows
+* Delete rows
+* Save modified data back to CSV
+* `COUNT`
+* `AVG`
+* `GROUP BY`
+* Multi-condition filtering with `AND` / `OR`
 
 ---
 
 ## Reflection
 
-This dataset helped me understand how CSV files can be used as a simple database.
+This dataset helped me practice how a simple CSV file can behave like a small database table.
 
-Although CSV is easy to read and edit, the program still needs validation to prevent invalid data. For example, duplicate IDs or invalid scores can make the data unreliable.
-
-Through this project, I learned that good data design is important even for a small CSV-based program.
+The current project focuses on querying existing data instead of modifying the file.
+Therefore, this README describes the dataset from the perspective of the implemented `SELECT`, `WHERE`, and `ORDER BY` features.
