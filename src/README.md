@@ -1,143 +1,358 @@
-# Source Code
+# Source Code Folder
 
-## About This Folder
+## Overview
 
-This folder contains the main C++ source code for **Project B: CSV Mini Database**.
+This folder contains the main C++ source code for **Project B: CSV Mini Database - SELECT Query Engine**.
 
-The main program file is:
+The main source file is:
 
-`main.cpp`
+```text
+main.cpp
+```
 
-This program is designed to work with the student CSV data stored in:
+The program is written in **C++17** and reads student data from:
 
-`Data/students.csv`
+```text
+Data/students.csv
+```
+
+The current implementation focuses on a SQL-like `SELECT` query system for CSV data.
 
 ---
 
-## Program Purpose
+## What the Program Actually Does
 
-The purpose of this program is to build a small CSV-based database system using C++.
+The program does the following tasks:
 
-The program can:
+1. Reads a CSV file.
+2. Stores the first row as column headers.
+3. Stores the remaining rows as data records.
+4. Shows the available column names.
+5. Lets the user enter one SQL-like `SELECT` query.
+6. Parses selected columns.
+7. Applies a `WHERE` condition if one is provided.
+8. Applies `ORDER BY` sorting if one is provided.
+9. Prints the result as a formatted table.
 
-* load student data from a CSV file;
-* display all records;
-* search records by column values;
-* insert a new student record;
-* validate user input;
-* save the updated data back to the CSV file.
+This is a read-only query program.
+It does not currently insert, update, delete, or save data back to the CSV file.
 
-This project helps me practice file handling, data processing, input validation, and basic database-like operations.
+---
+
+## Main Data Structure
+
+The program stores the CSV data using this idea:
+
+```cpp
+struct CSVTable {
+    vector<string> headers;
+    vector<vector<string>> rows;
+};
+```
+
+* `headers` stores the first row of the CSV file.
+* `rows` stores all student records after the header row.
 
 ---
 
 ## Main Functions
 
-### 1. Load CSV
+### `trim`
 
-The program reads `Data/students.csv` and stores the data in memory.
+Removes extra spaces, tabs, and newline characters from the beginning and end of a string.
 
-The first row of the CSV file is treated as the header, and the remaining rows are treated as student records.
+### `toLower`
 
----
+Converts a string to lowercase.
+This helps the program compare query keywords and column names without being case-sensitive.
 
-### 2. Display Records
+### `removeQuotes`
 
-The program can display all student records in a readable format.
-
-This helps users check the current data inside the CSV file.
-
----
-
-### 3. Search Records
-
-The program allows users to search data based on column values.
-
-For example, users can search by:
-
-* name;
-* department;
-* grade;
-* city;
-* score.
-
-This makes it easier to find specific student records.
-
----
-
-### 4. Insert Student
-
-The insert function allows users to add a new student record.
-
-Before inserting the data, the program checks whether the input is valid.
-
-The program checks:
-
-* whether the ID already exists;
-* whether required fields are empty;
-* whether grade, age, and score are numbers;
-* whether the score is between 0 and 100;
-* whether the grade is in a reasonable range.
-
-This prevents invalid data from being inserted into the CSV file.
-
----
-
-### 5. Save CSV
-
-After inserting a new record, the program can save the updated data back to `Data/students.csv`.
-
-This makes the inserted data persistent, so the new record will still exist after the program closes.
-
----
-
-## Why I Designed the Program This Way
-
-I designed the program to first load the CSV data into memory, then perform operations such as display, search, and insert.
-
-This design makes the program easier to manage because all records can be processed in memory before saving them back to the CSV file.
-
-For the insert function, I added validation because directly appending data without checking may cause problems.
+Removes single quotes or double quotes from a value.
 
 For example:
 
-* duplicate IDs may make records confusing;
-* empty names or departments make records incomplete;
-* invalid scores make the data unreasonable;
-* non-number values in grade, age, or score may cause errors.
+```text
+'CS' → CS
+"Taipei" → Taipei
+```
 
-Because of this, the program checks the input before adding a new record.
+### `splitCSVLine`
+
+Splits one CSV line into separate cells.
+It also handles simple quoted text while splitting by commas.
+
+### `splitByComma`
+
+Splits selected column names in the `SELECT` part.
+
+Example:
+
+```sql
+SELECT name, score FROM students;
+```
+
+The column part `name, score` is split into:
+
+```text
+name
+score
+```
+
+### `getColumnIndex`
+
+Finds the index of a column name from the CSV headers.
+
+For example, if the headers are:
+
+```text
+id, name, department, grade, age, score, city
+```
+
+then `score` is found as one of the available columns.
+
+### `isNumber`
+
+Checks whether a string can be treated as a number.
+
+This is used when comparing values in `WHERE` and sorting values in `ORDER BY`.
+
+### `compareValues`
+
+Compares two values using an operator.
+
+Supported operators:
+
+| Operator | Meaning               |
+| -------- | --------------------- |
+| `=`      | Equal                 |
+| `==`     | Equal                 |
+| `!=`     | Not equal             |
+| `>`      | Greater than          |
+| `<`      | Less than             |
+| `>=`     | Greater than or equal |
+| `<=`     | Less than or equal    |
+
+If both values are numbers, the program compares them numerically.
+Otherwise, it compares them as strings.
+
+### `loadCSV`
+
+Reads the CSV file.
+
+The first line becomes `headers`.
+The remaining non-empty lines become `rows`.
+
+### `showColumns`
+
+Prints the available column names so the user knows which fields can be used in the query.
+
+### `parseCondition`
+
+Parses a simple `WHERE` condition.
+
+Example:
+
+```sql
+WHERE score >= 80
+```
+
+This is parsed into:
+
+```text
+column: score
+operator: >=
+value: 80
+```
+
+### `executeSelect`
+
+This is the main function for the SELECT query feature.
+
+It handles:
+
+* `SELECT`
+* `FROM`
+* Selected columns
+* `WHERE`
+* `ORDER BY`
+* Result generation
+* Error messages for invalid columns or invalid query format
+
+### `printResultTable`
+
+Prints the selected result in a readable table format.
+It also prints the total number of result rows.
 
 ---
 
-## How to Compile
+## Supported Query Examples
 
-From the project root folder, use:
+### Select all data
 
-`g++ -std=c++17 -Wall -Wextra -o csv_database src/main.cpp`
+```sql
+SELECT * FROM students;
+```
 
-This will create an executable file named:
+### Select specific columns
 
-`csv_database`
+```sql
+SELECT name, score FROM students;
+```
+
+### Filter with WHERE
+
+```sql
+SELECT * FROM students WHERE department = 'CS';
+```
+
+```sql
+SELECT * FROM students WHERE score >= 80;
+```
+
+### Sort with ORDER BY
+
+```sql
+SELECT * FROM students ORDER BY score DESC;
+```
+
+### Combined query
+
+```sql
+SELECT name, department, score FROM students WHERE score >= 80 ORDER BY score DESC;
+```
+
+This combined query is a good live demo example because it shows column selection, filtering, sorting, and table output at the same time.
 
 ---
 
-## How to Run
+## Query Workflow
+
+The internal workflow is:
+
+```text
+User enters query
+→ Check SELECT and FROM format
+→ Parse selected columns
+→ Check whether selected columns exist
+→ Parse WHERE condition if provided
+→ Filter matching rows
+→ Parse ORDER BY if provided
+→ Sort rows
+→ Build selected result rows
+→ Print result table
+```
+
+---
+
+## Compile Command
+
+From the project root folder, compile the program with:
+
+```bash
+mkdir -p build
+g++ -std=c++17 -Wall -Wextra src/main.cpp -o build/csv_database
+```
+
+---
+
+## Run Command
 
 ### Linux / Git Bash / WSL
 
-`./csv_database Data/students.csv`
+```bash
+./build/csv_database Data/students.csv
+```
 
 ### Windows PowerShell
 
-`.\csv_database.exe Data/students.csv`
+```powershell
+.\build\csv_database.exe Data\students.csv
+```
+
+After running the program, enter a supported `SELECT` query.
+
+---
+
+## Important Note About the Default File Name
+
+In `main.cpp`, the default filename is currently:
+
+```cpp
+string filename = "students(1)(1).csv";
+```
+
+However, if the user provides a command-line argument, the program uses that file path instead.
+
+Therefore, the recommended way to run the program is:
+
+```bash
+./build/csv_database Data/students.csv
+```
+
+This ensures the program reads the correct CSV file from the `Data` folder.
+
+A possible future improvement is to change the default filename in the code to:
+
+```cpp
+string filename = "Data/students.csv";
+```
+
+---
+
+## Current Implementation Scope
+
+Implemented:
+
+| Feature                       | Status      |
+| ----------------------------- | ----------- |
+| Read CSV file                 | Implemented |
+| Store headers and rows        | Implemented |
+| Display available columns     | Implemented |
+| `SELECT *`                    | Implemented |
+| Select specific columns       | Implemented |
+| `WHERE` filtering             | Implemented |
+| Numeric and string comparison | Implemented |
+| `ORDER BY ASC`                | Implemented |
+| `ORDER BY DESC`               | Implemented |
+| Formatted result table        | Implemented |
+
+Not implemented:
+
+* `INSERT`
+* `UPDATE`
+* `DELETE`
+* Saving modified data back to CSV
+* `COUNT`
+* `AVG`
+* `GROUP BY`
+* `JOIN`
+* Multiple `WHERE` conditions using `AND` or `OR`
+* Full SQL syntax parsing
+
+---
+
+## Manual Test Cases
+
+| Test Query                                                                            | Purpose                             |
+| ------------------------------------------------------------------------------------- | ----------------------------------- |
+| `SELECT * FROM students;`                                                             | Check all rows and all columns      |
+| `SELECT name, score FROM students;`                                                   | Check selected columns              |
+| `SELECT * FROM students WHERE department = 'CS';`                                     | Check text filtering                |
+| `SELECT * FROM students WHERE score >= 80;`                                           | Check numeric filtering             |
+| `SELECT * FROM students ORDER BY score DESC;`                                         | Check descending sorting            |
+| `SELECT name, department, score FROM students WHERE score >= 80 ORDER BY score DESC;` | Check combined query behavior       |
+| `SELECT abc FROM students;`                                                           | Check invalid column handling       |
+| `SELECT * FROM students WHERE unknown = 1;`                                           | Check invalid WHERE column handling |
 
 ---
 
 ## Reflection
 
-Through this source code, I learned that a program should not only work with correct input. It should also handle incorrect input carefully.
+This source code helped me practice implementing a small query engine in C++.
 
-I also learned that code organization and clear function design are important. When a project becomes larger, separating different tasks into different functions makes the program easier to read, debug, and explain.
+The most important lesson is that documentation must match the actual program behavior.
+Since the current program focuses on the SELECT feature, the README should describe `SELECT`, `WHERE`, and `ORDER BY` clearly instead of claiming unsupported insert or save features.
 
-AI tools helped me design and improve the program, but I still needed to test the program by myself and make sure the output was correct.
+AI tools helped me review the program and rewrite the documentation, but I still needed to check the real C++ source code to make sure the README was accurate.
+::: 
