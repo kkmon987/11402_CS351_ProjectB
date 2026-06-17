@@ -1,152 +1,119 @@
-# CSV Mini Database - Students Dataset
+# Data Folder
 
-## Project Description
+## About This Folder
 
-This project is a simple CSV mini database system using a small student dataset.  
-The dataset is stored in a CSV file named `students.csv`.
+This folder contains the CSV data used in **Project B: CSV Mini Database**.
 
-The goal of this project is to practice basic database-like operations on CSV data, especially the `SELECT` function.
+The main data file is:
 
-## Dataset
+`students.csv`
 
-The CSV file contains student information.
+This CSV file stores student information and is used by the C++ program in `src/main.cpp`.
 
-File name:
+---
 
-```bash
-students.csv
-```
+## CSV File
 
-## CSV Format
+The data file is:
 
-```csv
-id,name,department,grade,age,score,city
-1,Alice,CS,1,18,85,Taipei
-2,Bob,EE,2,19,78,Taichung
-3,Charlie,CS,3,21,92,Taipei
-4,David,ME,2,20,66,Tainan
-5,Eva,CS,4,22,95,Kaohsiung
-6,Frank,EE,1,18,73,Taipei
-7,Grace,BA,3,21,88,Taichung
-8,Hank,ME,4,23,59,Tainan
-9,Ivy,CS,2,20,81,Kaohsiung
-10,Jack,EE,3,21,90,Taipei
-```
+`Data/students.csv`
 
-## Columns
+The CSV file contains student records. Each row represents one student, and each column represents one attribute of the student.
 
-| Column | Description |
-|---|---|
-| `id` | Student ID |
-| `name` | Student name |
-| `department` | Student department |
-| `grade` | School year |
-| `age` | Student age |
-| `score` | Student score |
-| `city` | City where the student is from |
+---
 
-## Example SELECT Queries
+## Data Format
 
-### Select all data
+The CSV file uses the following columns:
 
-```sql
-SELECT * FROM students;
-```
+| Column       | Meaning             |
+| ------------ | ------------------- |
+| `id`         | Student ID          |
+| `name`       | Student name        |
+| `department` | Student department  |
+| `grade`      | Student grade level |
+| `age`        | Student age         |
+| `score`      | Student score       |
+| `city`       | Student city        |
 
-### Select specific columns
+---
 
-```sql
-SELECT name, score FROM students;
-```
+## Example Data
 
-### Select students from CS department
+Example records:
 
-```sql
-SELECT * FROM students WHERE department = 'CS';
-```
+| id | name    | department | grade | age | score | city     |
+| -- | ------- | ---------- | ----- | --- | ----- | -------- |
+| 1  | Alice   | CS         | 1     | 18  | 85    | Taipei   |
+| 2  | Bob     | EE         | 2     | 19  | 78    | Taichung |
+| 3  | Charlie | CS         | 3     | 20  | 90    | Tainan   |
 
-### Select students with score greater than or equal to 80
+---
 
-```sql
-SELECT * FROM students WHERE score >= 80;
-```
+## Why I Designed the Data This Way
 
-### Select students from Taipei
+I designed the CSV data to be simple and easy to understand.
 
-```sql
-SELECT * FROM students WHERE city = 'Taipei';
-```
+Each row stores one student record, and each column stores one piece of information about the student.
 
-### Order students by score from high to low
+This design is useful for practicing basic database-like operations such as:
 
-```sql
-SELECT * FROM students ORDER BY score DESC;
-```
+* loading data;
+* displaying records;
+* searching records;
+* inserting new data;
+* saving data back to the CSV file.
 
-### Count students by department
+The `id` column is used as the unique identifier for each student. Because of this, the program checks whether an ID already exists before inserting a new record.
 
-```sql
-SELECT department, COUNT(*) FROM students GROUP BY department;
-```
+---
 
-### Average score by city
+## Insert Data Rules
 
-```sql
-SELECT city, AVG(score) FROM students GROUP BY city;
-```
+When inserting a new student record, the data should follow these rules:
 
-## Features
+| Field        | Rule                       |
+| ------------ | -------------------------- |
+| `id`         | Must be unique and numeric |
+| `name`       | Cannot be empty            |
+| `department` | Cannot be empty            |
+| `grade`      | Must be a valid number     |
+| `age`        | Must be a valid number     |
+| `score`      | Must be between 0 and 100  |
+| `city`       | Cannot be empty            |
 
-This project can be used to practice the following functions:
+These rules help keep the CSV data clean and reasonable.
 
-- Load CSV file
-- Display all records
-- Select specific columns
-- Filter records with conditions
-- Sort records
-- Count records
-- Calculate average values
-- Group records by a column
+---
 
-## How to Use
+## Example Insert Record
 
-1. Put `students.csv` in the project folder.
-2. Run the program.
-3. Enter a SELECT query.
-4. The program reads the CSV file and displays the matching result.
+A valid inserted record may look like this:
 
-Example:
+| id | name  | department | grade | age | score | city   |
+| -- | ----- | ---------- | ----- | --- | ----- | ------ |
+| 11 | Kevin | CS         | 2     | 20  | 87    | Taipei |
 
-```sql
-SELECT name, department, score FROM students WHERE score >= 80;
-```
+After insertion and saving, this new record will be written back to:
 
-Expected result:
+`Data/students.csv`
 
-```text
-Alice, CS, 85
-Charlie, CS, 92
-Eva, CS, 95
-Grace, BA, 88
-Ivy, CS, 81
-Jack, EE, 90
-```
+---
 
-## Project Purpose
+## How the Program Uses This Data
 
-This project helps me understand how a simple database works.  
-Although the data is stored in a CSV file instead of a real database, I can still practice basic database concepts such as selecting data, filtering records, sorting results, and grouping data.
+The C++ program reads `students.csv` when it starts.
+
+The program stores the data in memory, then allows users to display records, search records, and insert new student data.
+
+After changes are made, the program can save the updated data back to the CSV file.
+
+---
 
 ## Reflection
 
-Through this project, I learned how to organize structured data in a CSV file and how to design simple query functions.  
-I also learned that even a small dataset can be used to simulate basic database operations.
+This dataset helped me understand how CSV files can be used as a simple database.
 
-In the future, I would like to improve this project by adding more functions such as:
+Although CSV is easy to read and edit, the program still needs validation to prevent invalid data. For example, duplicate IDs or invalid scores can make the data unreliable.
 
-- Insert new records
-- Update existing records
-- Delete records
-- Save query results
-- Support more SQL-like syntax
-- Improve error handling
+Through this project, I learned that good data design is important even for a small CSV-based program.
