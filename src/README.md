@@ -354,5 +354,5 @@ This source code helped me practice implementing a small query engine in C++.
 The most important lesson is that documentation must match the actual program behavior.
 Since the current program focuses on the SELECT feature, the README should describe `SELECT`, `WHERE`, and `ORDER BY` clearly instead of claiming unsupported insert or save features.
 
-AI tools helped me review the program and rewrite the documentation, but I still needed to check the real C++ source code to make sure the README was accurate.
-::: 
+
+
